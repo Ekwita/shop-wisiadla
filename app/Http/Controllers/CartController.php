@@ -20,9 +20,9 @@ class CartController extends Controller
     public function index(): Response
     {
         $user = Auth::user();
-        $cartItems = CartItem::where('user_id', $user->id)->get();
-
-        return Inertia::render('Cart', [
+        $cartItems = CartItem::with('product')->where('user_id', $user->id)->get();
+        // dd($cartItems);
+        return Inertia::render('Cart/Cart', [
             'cartItems' => $cartItems,
         ]);
     }
@@ -47,10 +47,7 @@ class CartController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CartItem $cartItem)
-    {
-        //
-    }
+    public function show(CartItem $cartItem) {}
 
     /**
      * Show the form for editing the specified resource.
