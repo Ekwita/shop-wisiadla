@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->integer('quantity')->default(0);
+            $table->foreignId('category_id')->nullable()->constrained();
             $table->decimal('value', 10, 2)->default(0);
             $table->timestamps();
         });
