@@ -14,7 +14,6 @@ class ShopController extends Controller
     {
         $products = Product::with('category')->get();
         $productsList = new ResourceCollection($products);
-        // dd($productsList);
 
         return Inertia::render('Shop', [
             'products' => ProductResource::collection($productsList)

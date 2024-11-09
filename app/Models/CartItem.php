@@ -16,9 +16,9 @@ class CartItem extends Model
         'value'
     ];
 
-    public function product(): HasOne
+    public function product(): BelongsTo
     {
-        return $this->hasOne(Product::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function user(): BelongsTo
