@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CartItemRequest;
 use App\Models\CartItem;
 use App\Services\Interfaces\CartServiceInterface;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,18 +21,11 @@ class CartController extends Controller
     {
         $user = Auth::user();
         $cartItems = CartItem::with('product')->where('user_id', $user->id)->get();
-        // dd($cartItems);
+
         return Inertia::render('Cart/Cart', [
             'cartItems' => $cartItems,
+            'canLogin' => Route::has('login'),
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -41,35 +34,25 @@ class CartController extends Controller
     public function store(CartItemRequest $request)
     {
         $cartItem = $request->getDto();
-        $this->cartService->createCartItem($cartItem);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(CartItem $cartItem) {}
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CartItem $cartItem)
-    {
-        //
+        $this->cartService->upsertCartItem($cartItem);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CartItem $cartItem)
+    public function update(CartItemRequest $request, CartItem $cart)
     {
-        //
+        $newQuantity = $request->quantity;
+        $cart->quantity = $newQuantity;
+        $cart->value = $newQuantity * $cart->product->price;
+        $cart->save();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CartItem $cartItem)
+    public function destroy(CartItem $cart)
     {
-        //
+        $cart->delete();
     }
 }

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->decimal('value', 10, 2)->default(0);
             $table->string('status')->default(OrderStatus::PendingPayment);
+            $table->string('payment_method')->nullable();
+            $table->boolean('is_paid')->default(false);
             $table->timestamps();
         });
     }

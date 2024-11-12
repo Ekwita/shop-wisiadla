@@ -3,8 +3,10 @@
 namespace App\Services\Interfaces;
 
 use App\Dtos\NewCartItem;
+use App\Models\CartItem;
 
 interface CartServiceInterface
 {
-    public function createCartItem(NewCartItem $newCartItem);
+    public function upsertCartItem(NewCartItem $newCartItem);
+    // public function updateCartItem(NewCartItem $updatedCartItem, CartItem $cartItem);
 }

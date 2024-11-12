@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\CreateOrderRequest;
+use App\Models\Order;
 
 class OrderController extends Controller
 {
-    //
+    public function store(CreateOrderRequest $request)
+    {
+        $order = $request->getDto();
+        Order::create($order->toArray());
+    }
 }

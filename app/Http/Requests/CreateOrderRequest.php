@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Dtos\NewOrderDto;
+use App\Enums\OrderStatus;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateOrderRequest extends FormRequest
@@ -11,7 +13,7 @@ class CreateOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,5 +26,24 @@ class CreateOrderRequest extends FormRequest
         return [
             //
         ];
+    }
+
+    public function getDto(): NewOrderDto
+    {
+        return new NewOrderDto(
+            $this->getUserId(),
+            $this->get('value'),
+            OrderStatus::PendingPayment->value,
+            null,
+            false
+        );
+    }
+
+    private function getUserId(): int
+    {
+        $user = auth()->user();
+        $userId = $user->id;
+
+        return $userId;
     }
 }

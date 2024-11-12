@@ -5,10 +5,10 @@ namespace App\Dtos;
 class NewCartItem
 {
     public function __construct(
-        public int $productId,
+        public ?int $productId,
         public ?int $userId,
-        public int $quantity,
-        public float $price,
+        public ?int $quantity,
+        public ?float $price,
         public ?float $value,
         public ?int $category
     ) {}
