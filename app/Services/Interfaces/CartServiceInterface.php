@@ -8,5 +8,5 @@ use App\Models\CartItem;
 interface CartServiceInterface
 {
     public function upsertCartItem(NewCartItem $newCartItem);
-    // public function updateCartItem(NewCartItem $updatedCartItem, CartItem $cartItem);
+    public function updateCartItem(int $quantity, CartItem $cart);
 }

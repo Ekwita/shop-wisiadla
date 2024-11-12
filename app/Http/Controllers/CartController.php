@@ -43,9 +43,7 @@ class CartController extends Controller
     public function update(CartItemRequest $request, CartItem $cart)
     {
         $newQuantity = $request->quantity;
-        $cart->quantity = $newQuantity;
-        $cart->value = $newQuantity * $cart->product->price;
-        $cart->save();
+        $this->cartService->updateCartItem($newQuantity, $cart);
     }
 
     /**

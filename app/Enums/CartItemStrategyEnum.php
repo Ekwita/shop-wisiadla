@@ -6,7 +6,6 @@ use App\Strategies\Cart\AddNewItemStrategy;
 use App\Strategies\Cart\Interfaces\CartAdjustmentStrategyInterface;
 use App\Strategies\Cart\IncreaseWithinLimitStrategy;
 use App\Strategies\Cart\LimitToMaxQuantityStrategy;
-use App\Strategies\Cart\SetExactQuantityStrategy;
 
 enum CartItemStrategyEnum: string
 {

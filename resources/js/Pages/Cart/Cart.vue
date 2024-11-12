@@ -11,11 +11,10 @@ const props = defineProps({
 });
 
 const form = useForm({
-    quantity: 1, // domyślna wartość
+    quantity: 1,
 });
 
 const updateQuantity = (item) => {
-    // Walidacja ilości i wykonanie żądania PUT
     if (item.quantity >= 1 && item.quantity <= item.product.quantity) {
         form.quantity = item.quantity;
     } else {
@@ -30,12 +29,12 @@ const updateQuantity = (item) => {
 // Funkcje zarządzania ilością przez przyciski
 const increaseQuantity = (item) => {
     if (item.quantity < item.product.quantity) item.quantity += 1;
-    updateQuantity(item); // Aktualizacja przy zmianie
+    updateQuantity(item);
 };
 
 const decreaseQuantity = (item) => {
     if (item.quantity > 1) item.quantity -= 1;
-    updateQuantity(item); // Aktualizacja przy zmianie
+    updateQuantity(item);
 };
 
 const deleteItem = (item) => {
@@ -50,10 +49,6 @@ const deleteItem = (item) => {
         });
     }
 };
-
-props.cartItems.forEach(item => {
-    console.log(item.product.quantity);
-});
 </script>
 
 <template>

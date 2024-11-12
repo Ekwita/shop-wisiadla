@@ -2,13 +2,9 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Dtos\NewCartItem;
+use App\Models\CartItem;
 
 interface CartRepositoryInterface
 {
-    public function create(NewCartItem $newCartItem);
-    public function setMaxQuantity(NewCartItem $newCartItem);
-    public function setNewQuantity(NewCartItem $newCartItem);
-    public function increaseQuantity(NewCartItem $newCartItem);
-    public function decreaseQuantity(NewCartItem $newCartItem);
+    public function setNewQuantity(int $quantity, float $newValue, CartItem $cart): void;
 }

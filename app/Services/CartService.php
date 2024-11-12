@@ -3,13 +3,18 @@
 namespace App\Services;
 
 use App\Dtos\NewCartItem;
-use App\Enums\CartItemStrategyEnum;
+use App\Factories\CartItemStrategiesFactory;
 use App\Models\CartItem;
+use App\Repositories\Interfaces\CartRepositoryInterface;
 use App\Services\Interfaces\CartServiceInterface;
-use App\Strategies\Cart\Interfaces\CartAdjustmentStrategyInterface;
 
 class CartService implements CartServiceInterface
 {
+    public function __construct(
+        protected CartItemStrategiesFactory $cartStrategiesFactory,
+        protected CartRepositoryInterface $cartRepository
+    ) {}
+
     public function upsertCartItem(NewCartItem $newCartItem)
     {
         $user = auth()->user();
@@ -24,23 +29,15 @@ class CartService implements CartServiceInterface
         $currentQuantity = $cartItem ? $cartItem->quantity : null;
         $maxQuantity = $cartItem ? $cartItem->product->quantity : null;
 
-        $selectedStrategy = $this->chooseStrategy($desiredQuantity, $currentQuantity, $maxQuantity);
+
+        $selectedStrategy = $this->cartStrategiesFactory->chooseStrategy($desiredQuantity, $currentQuantity, $maxQuantity);
 
         $setCartItemQuantity = $selectedStrategy->upsert($newCartItem, $userId);
     }
 
-    public function updateItem()
+    public function updateCartItem(int $quantity, CartItem $cart)
     {
-        
-    }
-
-    private function chooseStrategy(int $desiredQuantity, ?int $currentQuantity, ?int $maxQuantity): CartAdjustmentStrategyInterface
-    {
-        foreach (CartItemStrategyEnum::cases() as $strategy) {
-            $cartItemStrategy = $strategy->make();
-            if ($cartItemStrategy->isSatisfiedBy($desiredQuantity, $currentQuantity, $maxQuantity)) {
-                return $cartItemStrategy;
-            }
-        }
+        $newValue = $cart->product->price * $quantity;
+        $this->cartRepository->setNewQuantity($quantity, $newValue, $cart);
     }
 }
