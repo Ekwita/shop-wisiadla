@@ -9,7 +9,6 @@ class OrderController extends Controller
 {
     public function store(CreateOrderRequest $request)
     {
-        $order = $request->getDto();
-        Order::create($order->toArray());
+        dd($request->all());
     }
 }

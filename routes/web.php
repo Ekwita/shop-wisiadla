@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
@@ -28,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/products', ProductController::class);
     Route::resource('/cart', CartController::class)->except(['show', 'edit']);
+    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
 });
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
