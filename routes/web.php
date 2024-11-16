@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/products', ProductController::class);
     Route::resource('/cart', CartController::class)->except(['show', 'edit']);
+    Route::delete('/carts', [CartController::class, 'destroySelected'])->name('cart.destroy_selected');
+    Route::delete('/cart', [CartController::class, 'destroyAll'])->name('cart.destroy_all');
     Route::post('/order', [OrderController::class, 'store'])->name('order.store');
 });
 

@@ -1,6 +1,6 @@
 <script setup>
 import { Link, useForm, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     cartItems: {
@@ -11,13 +11,21 @@ const props = defineProps({
     },
 });
 
+const selectAll = ref(false);
+
+const toggleSelectAll = () => {
+    props.cartItems.forEach(item => {
+        item.selected = selectAll.value;
+    });
+};
+
 const formQuantity = useForm({
     quantity: 1,
 });
 
 const formSelectedProducts = useForm({
     cartItems: [],
-})
+});
 
 const updateQuantity = (item) => {
     if (item.quantity >= 1 && item.quantity <= item.product.quantity) {
@@ -31,7 +39,6 @@ const updateQuantity = (item) => {
     });
 };
 
-// Funkcje zarządzania ilością przez przyciski
 const increaseQuantity = (item) => {
     if (item.quantity < item.product.quantity) item.quantity += 1;
     updateQuantity(item);
@@ -62,6 +69,21 @@ const cartSubtotal = computed(() => {
 
     return total.toFixed(2);
 });
+
+const deleteSelectedItems = () => {
+    if (confirm('Are you sure you want to delete selected products from your cart?')) {
+        const selectedItems = props.cartItems.filter(item => item.selected);
+
+        formSelectedProducts.cartItems = selectedItems;
+
+        if (formSelectedProducts.cartItems.length > 0) {
+            formSelectedProducts.delete(route('cart.destroy_selected'));
+        } else {
+            console.error('No item selected');
+        }
+    }
+}
+
 const submitSelectedItems = () => {
 
     const selectedItems = props.cartItems.filter(item => item.selected);
@@ -75,6 +97,11 @@ const submitSelectedItems = () => {
     }
 }
 
+const deleteAll = () => {
+    if (confirm('Are you sure you want to delete all products from your cart?')) {
+        router.delete(route('cart.destroy_all'));
+    }
+}
 
 
 </script>
@@ -97,7 +124,26 @@ const submitSelectedItems = () => {
             <!-- Lista produktów -->
             <div class="lg:col-span-3">
                 <ul class="space-y-4">
-                    <li v-for="item in cartItems" :key="item.id"
+                    <li class="flex items-center justify-between p-4 border rounded-lg shadow-sm hover:shadow-md">
+                        <!-- Checkbox 'Check all' -->
+                        <div>
+                            <input type="checkbox" v-model="selectAll" @change="toggleSelectAll"
+                                class="form-checkbox h-5 w-5 text-indigo-600" />
+                            <label class="ml-2">Check all</label>
+                        </div>
+
+                        <!-- Rozwijane menu 'Delete' -->
+
+
+                        <button type="button" @click="deleteSelectedItems">Delete selected</button>
+                        <button type="button" @click="deleteAll">Delete all</button>
+
+
+
+
+
+                    </li>
+                    <li v-if="cartItems && cartItems.length > 0" v-for="item in cartItems" :key="item.id"
                         class="flex items-center justify-between p-4 border rounded-lg shadow-sm hover:shadow-md">
 
                         <!-- Checkbox -->
@@ -140,16 +186,17 @@ const submitSelectedItems = () => {
 
                         <!-- Show and Delete -->
                         <div class="flex space-x-4">
-                            <Link :href="'#'"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-200">
-                            Show
-                            </Link>
+                            <button
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-200">
+                                Show
+                            </button>
                             <button @click="deleteItem(item)"
-                                class="text-red-600 hover:text-red-800 text-sm font-semibold">
+                                class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition duration-200">
                                 Delete
                             </button>
                         </div>
                     </li>
+                    <p v-else class="text-center text-gray-500 font-semibold">Your cart is empty.</p>
                 </ul>
             </div>
 
@@ -160,15 +207,19 @@ const submitSelectedItems = () => {
                     <span>Subtotal:</span>
                     <span>{{ cartSubtotal }} PLN</span>
                 </div>
-                <button
-                    class="block bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-indigo-700 transition-colors duration-200"
-                    @click="submitSelectedItems">
-                    Proceed to checkout
-                </button>
-                <Link :href="route('shop.index')"
-                    class="block text-center text-blue-600 font-semibold hover:text-blue-800">
-                Continue shopping
-                </Link>
+
+                <!-- Dodanie przycisku Proceed to checkout oraz Continue shopping w jednej kolumnie -->
+                <div class="flex flex-col space-y-2">
+                    <button
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-indigo-700 transition-colors duration-200"
+                        @click="submitSelectedItems">
+                        Proceed to checkout
+                    </button>
+                    <Link :href="route('shop.index')"
+                        class="text-center text-blue-600 font-semibold hover:text-blue-800">
+                    Continue shopping
+                    </Link>
+                </div>
             </div>
         </div>
     </div>

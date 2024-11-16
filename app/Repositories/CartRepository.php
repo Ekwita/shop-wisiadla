@@ -13,4 +13,16 @@ class CartRepository implements CartRepositoryInterface
         $cart->value = $newValue;
         $cart->save();
     }
+
+    public function deleteSelectedItems(array $itemsList)
+    {
+        foreach ($itemsList as $item) {
+            CartItem::where('id', $item['id'])->delete();
+        }
+    }
+
+    public function deleteAllItems(int $userId)
+    {
+        CartItem::where('user_id', $userId)->delete();
+    }
 }

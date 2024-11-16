@@ -9,4 +9,6 @@ interface CartServiceInterface
 {
     public function upsertCartItem(NewCartItem $newCartItem);
     public function updateCartItem(int $quantity, CartItem $cart);
+    public function deleteSelectedItems(array $itemsList);
+    public function deleteAllItems();
 }

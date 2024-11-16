@@ -7,6 +7,7 @@ use App\Factories\CartItemStrategiesFactory;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartRepositoryInterface;
 use App\Services\Interfaces\CartServiceInterface;
+use Illuminate\Support\Facades\Auth;
 
 class CartService implements CartServiceInterface
 {
@@ -17,7 +18,7 @@ class CartService implements CartServiceInterface
 
     public function upsertCartItem(NewCartItem $newCartItem)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $userId = $user->id;
 
         $desiredQuantity = $newCartItem->quantity;
@@ -32,12 +33,24 @@ class CartService implements CartServiceInterface
 
         $selectedStrategy = $this->cartStrategiesFactory->chooseStrategy($desiredQuantity, $currentQuantity, $maxQuantity);
 
-        $setCartItemQuantity = $selectedStrategy->upsert($newCartItem, $userId);
+        $selectedStrategy->upsert($newCartItem, $userId);
     }
 
     public function updateCartItem(int $quantity, CartItem $cart)
     {
         $newValue = $cart->product->price * $quantity;
         $this->cartRepository->setNewQuantity($quantity, $newValue, $cart);
+    }
+
+    public function deleteSelectedItems(array $itemsList)
+    {
+        $this->cartRepository->deleteSelectedItems($itemsList);
+    }
+
+    public function deleteAllItems()
+    {
+        $user = Auth::user();
+        $userId = $user->id;
+        $this->cartRepository->deleteAllItems($userId);
     }
 }

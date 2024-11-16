@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CartItemRequest;
 use App\Models\CartItem;
 use App\Services\Interfaces\CartServiceInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,5 +53,17 @@ class CartController extends Controller
     public function destroy(CartItem $cart)
     {
         $cart->delete();
+    }
+
+    public function destroySelected(Request $request)
+    {
+        $itemsList = $request->cartItems;
+
+        $this->cartService->deleteSelectedItems($itemsList);
+    }
+
+    public function destroyAll()
+    {
+        $this->cartService->deleteAllItems();       
     }
 }
