@@ -32,6 +32,8 @@ const formSelectedProducts = useForm({
 const updateQuantity = (item) => {
     if (item.quantity >= 1 && item.quantity <= item.product.quantity) {
         formQuantity.quantity = item.quantity;
+    } else if (item.quantity == 0 || item.quantity == null) {
+        formQuantity.quantity = 1;
     } else {
         formQuantity.quantity = item.product.quantity;
     }
@@ -165,11 +167,6 @@ const deleteAll = () => {
                                 </MenuItems>
                             </transition>
                         </Menu>
-
-
-
-
-
                     </li>
                     <li v-if="cartItems && cartItems.length > 0" v-for="item in cartItems" :key="item.id"
                         class="flex items-center justify-between p-4 border rounded-lg shadow-sm hover:shadow-md">

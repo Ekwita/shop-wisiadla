@@ -1,19 +1,12 @@
 <script setup>
 import { ref } from 'vue';
-import { useForm, Link } from '@inertiajs/vue3';
-
-
+import { Link } from '@inertiajs/vue3';
+import ProductCard from '@/components/ProductCard.vue';
 
 const props = defineProps({
-    products: {
-        type: Object
-    },
-    canLogin: {
-        type: Boolean,
-    },
-    canRegister: {
-        type: Boolean,
-    },
+    products: Object,
+    canLogin: Boolean,
+    canRegister: Boolean,
 });
 
 const quantities = ref({});
@@ -27,20 +20,13 @@ props.products.data.forEach(product => {
     categories.value[product.id] = product.category?.id || null;
 });
 
-const submitForm = (productId, quantity, price, category) => {
-    const form = useForm({ quantity, price, category_id: category });
-
-    form.post(route('cart.store', { product: productId }), {
-        onSuccess: () => {
-            showModal.value = true;
-        }
-    });
+const openModal = () => {
+    showModal.value = true;
 };
 
 const closeModal = () => {
     showModal.value = false;
 };
-
 </script>
 
 <template>
@@ -56,13 +42,11 @@ const closeModal = () => {
                         class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
                     Cart
                     </Link>
-
                     <template v-else>
                         <Link :href="route('login')"
                             class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
                         Log in
                         </Link>
-
                         <Link v-if="canRegister" :href="route('register')"
                             class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
                         Register
@@ -71,32 +55,12 @@ const closeModal = () => {
                 </nav>
             </header>
         </div>
+
         <div class="max-w-4xl mx-auto p-6 bg-gray-50">
             <h1 class="text-3xl font-bold text-center mb-8 text-gray-700">Products</h1>
             <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <li v-for="product in products.data" :key="product.id"
-                    class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                    <form
-                        @submit.prevent="submitForm(product.id, quantities[product.id], prices[product.id], categories[product.id])"
-                        class="flex flex-col space-y-4">
-                        <div class="text-lg font-semibold text-gray-800">
-                            <span class="block text-xl font-bold">{{ product.name }}</span>
-                            <span class="text-gray-500">${{ product.price }}</span>
-                            <span v-if="product.category" class="text-sm block text-gray-400">{{ product.category.name
-                                }}</span>
-                            <span class="text-sm block text-gray-400">Available: {{ product.quantity
-                                }}</span>
-                        </div>
-
-                        <input type="number" v-model="quantities[product.id]" min="1" :max="product.quantity"
-                            class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-
-                        <button type="submit"
-                            class="bg-indigo-600 text-white rounded-lg px-4 py-2 font-semibold hover:bg-indigo-700 transition-colors duration-200">
-                            Add to Cart
-                        </button>
-                    </form>
-                </li>
+                <ProductCard v-for="product in products.data" :key="product.id" :product="product"
+                    :quantities="quantities" :prices="prices" :categories="categories" :onAddToCart="openModal" />
             </ul>
 
             <!-- Modal -->
@@ -105,12 +69,10 @@ const closeModal = () => {
                     <h2 class="text-2xl font-bold mb-4 text-gray-800">Product added to cart!</h2>
                     <p class="text-gray-600 mb-6">You have successfully added this product to your cart.</p>
                     <div class="flex space-x-4 justify-center">
-                        <!-- Button to go to the cart -->
                         <Link :href="route('cart.index')"
                             class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-200">
                         Go to Cart
                         </Link>
-                        <!-- Button to close modal and return to shop -->
                         <button @click="closeModal"
                             class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-colors duration-200">
                             Continue Shopping
