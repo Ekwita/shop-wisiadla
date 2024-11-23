@@ -1,13 +1,18 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+const page = usePage();
+
+const isUser = computed(() => page.props.auth.user && page.props.auth.user.role === 'user');
+const isAdmin = computed(() => page.props.auth.user && page.props.auth.user.role === 'admin');
 </script>
 
 <template>
@@ -33,8 +38,11 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('shop.index')">
                                     Shop
                                 </NavLink>
-                                <NavLink :href="route('cart.index')">
+                                <NavLink v-if="isUser" :href="route('cart.index')">
                                     Cart
+                                </NavLink>
+                                <NavLink v-if="isAdmin" :href="route('products.index')">
+                                    Products
                                 </NavLink>
                             </div>
                         </div>

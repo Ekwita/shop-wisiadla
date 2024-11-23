@@ -16,8 +16,8 @@ class CheckUserRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-        if($user && $user->role() === UserRole::ADMIN) {
+        $user = $request->user();   
+        if ($user && $user->role === UserRole::ADMIN->value) {
             return $next($request);
         }
 

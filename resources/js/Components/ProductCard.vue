@@ -10,6 +10,7 @@ const props = defineProps({
     onAddToCart: Function,
 });
 
+console.log(props.product)
 const quantity = ref(props.quantities[props.product.id]);
 
 const submitForm = () => {
@@ -29,8 +30,9 @@ const submitForm = () => {
     <li class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
         <form @submit.prevent="submitForm" class="flex flex-col space-y-4">
             <div class="text-lg font-semibold text-gray-800">
+                <img :src="'../storage/' + product.image_path" alt="">
                 <span class="block text-xl font-bold">{{ product.name }}</span>
-                <span class="text-gray-500">${{ product.price }}</span>
+                <span class="text-gray-500">{{ product.price }} PLN</span>
                 <span v-if="product.category" class="text-sm block text-gray-400">{{ product.category.name }}</span>
                 <span class="text-sm block text-gray-400">Available: {{ product.quantity }}</span>
             </div>

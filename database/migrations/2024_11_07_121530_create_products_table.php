@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2)->default(0);
             $table->integer('quantity')->default(0);
             $table->foreignId('category_id')->nullable()->constrained();
+            $table->string('image_path')->nullable();
             $table->timestamps();
         });
     }
